@@ -20,7 +20,7 @@
   "dependencies": {
     "@openzeppelin/contracts": "^2.5.0",
     "@studydefi/money-legos": "^2.1.0",
-    "@truffle/hdwallet-provider": "^1.0.34",
+    "@truffle/hdwallet-provider": "^1.0.42",
     "dotenv": "^8.2.0",
     "ethers": "^4.0.46"
   },
