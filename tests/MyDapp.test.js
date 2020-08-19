@@ -54,6 +54,7 @@ describe("initial conditions", () => {
     // check DAI gained
     const daiGained = parseFloat(fromWei(daiAfter.sub(daiBefore)));
     const expectedDaiGained = parseFloat(fromWei(ethPrice.mul(5)));
+    // TODO: there is a difference between actual and gained
     expect(daiGained).toBeCloseTo(expectedDaiGained, 0);
 
     // check ETH lost
