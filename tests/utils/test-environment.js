@@ -1,9 +1,8 @@
 require("dotenv").config();
-
 const { ethers } = require("ethers");
 const Ganache = require("ganache-core");
 const NodeEnvironment = require("jest-environment-node");
-const WALLET_WITH_DAI = "0x07BB41Df8C1d275c4259CdD0dBf0189d6a9a5F32"
+const WALLET_WITH_DAI = "0x58c8a6312e5E975b1627969cC22Af241e08742Ad" // NOTE: This can change if DAI is moved!
 
 const startChain = async () => {
   const ganache = Ganache.provider({
