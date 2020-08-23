@@ -1,5 +1,5 @@
 require("dotenv").config();
-jest.setTimeout(200000);
+jest.setTimeout(2000000);
 
 const { ethers, utils } = require("ethers");
 const { parseUnits } = utils;
@@ -94,7 +94,7 @@ describe("initial conditions", () => {
     expect(ethLost).toBeCloseTo(buyAmount);
   });
 
-  test("Initiate flash loan", async () => {
+  test("Initiate flash loan 100,000", async () => {
     try {
       const tokenAmount = parseUnits("2", "wei"); // must be exactly 2 wei
       await daiTokenContractAsMain.transfer(
@@ -115,6 +115,27 @@ describe("initial conditions", () => {
       } else {
         console.log(error)
       }
+    }
+  });
+
+  test("Initiate flash loan 200,000", async () => {
+    try {
+      const tokenAmount = parseUnits("2", "wei"); // must be exactly 2 wei
+      await daiTokenContractAsMain.transfer(
+        dydxFlashLoan.address,
+        tokenAmount
+      );
+      const tx = await dydxFlashLoan.initiateFlashLoan(
+        legos.dydx.soloMargin.address,
+        legos.erc20.dai.address,
+        parseUnits("200000", "ether"),
+        {
+          gasLimit: 6000000,
+        }
+      );
+      await tx.wait();
+    } catch (error) {
+        console.log(error)
     }
   });
 
