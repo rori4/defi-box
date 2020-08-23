@@ -94,33 +94,33 @@ describe("initial conditions", () => {
     expect(ethLost).toBeCloseTo(buyAmount);
   });
 
-  test("Initiate flash loan 100,000", async () => {
-    try {
-      const tokenAmount = parseUnits("2", "wei"); // must be exactly 2 wei
-      await daiTokenContractAsMain.transfer(
-        dydxFlashLoan.address,
-        tokenAmount
-      );
-      const tx = await dydxFlashLoan.initiateFlashLoan(
-        legos.dydx.soloMargin.address,
-        legos.erc20.dai.address,
-        parseUnits("100000", "ether")
-      );
-    } catch (error) {
-      if(error.hashes){
-        const errorHash = error.hashes[0];
-        const reason = error.results[errorHash].reason;
-        console.log(reason)
-        expect(reason).toBe("Flash loan of 100,000 successful!");
-      } else {
-        console.log(error)
-      }
-    }
-  });
+  // test("Initiate flash loan 100,000", async () => {
+  //   try {
+  //     const tokenAmount = parseUnits("2", "wei"); // must be exactly 2 wei
+  //     await daiTokenContractAsMain.transfer(
+  //       dydxFlashLoan.address,
+  //       tokenAmount
+  //     );
+  //     const tx = await dydxFlashLoan.initiateFlashLoan(
+  //       legos.dydx.soloMargin.address,
+  //       legos.erc20.dai.address,
+  //       parseUnits("100000", "ether")
+  //     );
+  //   } catch (error) {
+  //     if(error.hashes){
+  //       const errorHash = error.hashes[0];
+  //       const reason = error.results[errorHash].reason;
+  //       console.log(reason)
+  //       expect(reason).toBe("Flash loan of 100,000 successful!");
+  //     } else {
+  //       console.log(error)
+  //     }
+  //   }
+  // });
 
   test("Initiate flash loan 200,000", async () => {
     try {
-      const tokenAmount = parseUnits("2", "wei"); // must be exactly 2 wei
+      const tokenAmount = parseUnits("50", "ether"); // must be exactly 2 wei
       await daiTokenContractAsMain.transfer(
         dydxFlashLoan.address,
         tokenAmount
