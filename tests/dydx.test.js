@@ -1,5 +1,5 @@
 require("dotenv").config();
-jest.setTimeout(2000000);
+jest.setTimeout(100000);
 
 const { ethers, utils } = require("ethers");
 const { parseUnits } = utils;
@@ -13,24 +13,17 @@ const fromWei = (x, u = 18) => ethers.utils.formatUnits(x, u);
 
 describe("initial conditions", () => {
   let wallet,
-    daiTokenContractAsWalletWithDai,
-    daiTokenContractAsMain,
+    daitTokenContract,
     dydxFlashLoan,
     walletWithDai,
     uniswapFactory;
 
   beforeAll(async () => {
     wallet = global.wallet;
-    walletWithDai = global.walletWithDai;
-    daiTokenContractAsMain = new ethers.Contract(
+    daitTokenContract = new ethers.Contract(
       erc20.dai.address,
       erc20.dai.abi,
       wallet
-    );
-    daiTokenContractAsWalletWithDai = new ethers.Contract(
-      erc20.dai.address,
-      erc20.dai.abi,
-      walletWithDai
     );
 
     dydxFlashLoan = new ethers.Contract(
@@ -47,7 +40,7 @@ describe("initial conditions", () => {
   });
 
   test("DyDx Contract should not have DAI", async () => {
-    const daiInContractBalance = await daiTokenContractAsMain.balanceOf(
+    const daiInContractBalance = await daitTokenContract.balanceOf(
       dydxFlashLoan.address
     );
 
@@ -69,7 +62,7 @@ describe("initial conditions", () => {
 
     // collect info on state before the swap
     const ethBefore = await wallet.getBalance();
-    const daiBefore = await daiTokenContractAsMain.balanceOf(wallet.address);
+    const daiBefore = await daitTokenContract.balanceOf(wallet.address);
     const expectedDai = await daiExchange.getEthToTokenInputPrice(
       ethers.utils.parseEther(buyAmount.toString()),
     );
@@ -86,7 +79,7 @@ describe("initial conditions", () => {
 
     // collect info on state after the swap
     const ethAfter = await wallet.getBalance();
-    const daiAfter = await daiTokenContractAsMain.balanceOf(wallet.address);
+    const daiAfter = await daitTokenContract.balanceOf(wallet.address);
     const ethLost = parseFloat(fromWei(ethBefore.sub(ethAfter)));
 
     expect(fromWei(daiBefore)).toBe("0.0");
@@ -97,7 +90,7 @@ describe("initial conditions", () => {
   test("Initiate flash loan 100,000", async () => {
     try {
       const tokenAmount = parseUnits("2", "wei"); // must be exactly 2 wei
-      await daiTokenContractAsMain.transfer(
+      await daitTokenContract.transfer(
         dydxFlashLoan.address,
         tokenAmount
       );
@@ -120,8 +113,8 @@ describe("initial conditions", () => {
 
   test("Initiate flash loan 200,000", async () => {
     try {
-      const tokenAmount = parseUnits("2", "wei"); // must be exactly 2 wei
-      await daiTokenContractAsMain.transfer(
+      const tokenAmount = parseUnits("20", "ether"); // must be exactly 2 wei
+      await daitTokenContract.transfer(
         dydxFlashLoan.address,
         tokenAmount
       );
@@ -138,36 +131,4 @@ describe("initial conditions", () => {
         console.log(error)
     }
   });
-
-  // test("Initiate flash loan 200,000", async () => {
-  //   try {
-  //     const walletBalance = await daiTokenContractAsWalletWithDai.balanceOf(walletWithDai._address)
-  //     const tokenAmount = parseUnits("2", "wei");
-  //     await daiTokenContractAsWalletWithDai.transfer(
-  //       dydxFlashLoan.address,
-  //       tokenAmount
-  //     );
-  //     const daiInContractBalance = await daiTokenContractAsMain.balanceOf(
-  //       dydxFlashLoan.address
-  //     );
-  //     await daiTokenContractAsWalletWithDai.transfer(
-  //       dydxFlashLoan.address,
-  //       tokenAmount
-  //     );
-  //     const tx = await dydxFlashLoan.initiateFlashLoan(
-  //       legos.dydx.soloMargin.address,
-  //       legos.erc20.dai.address,
-  //       parseUnits("200000", "ether")
-  //     );
-  //   } catch (error) {
-  //     if(error.hashes){
-  //       const errorHash = error.hashes[0];
-  //       const reason = error.results[errorHash].reason;
-  //       console.log(reason)
-  //       expect(reason).toBe("Flash loan of 100,000 successful!");
-  //     } else {
-  //       console.log(error)
-  //     }
-  //   }
-  // });
 });
