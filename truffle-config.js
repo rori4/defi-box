@@ -1,14 +1,14 @@
 require("dotenv").config();
 // const HDWalletProvider = require("@truffle/hdwallet-provider");
 const ProviderEngine = require("web3-provider-engine");
-const WebsocketSubprovider = require("web3-provider-engine/subproviders/websocket.js")
+const WebsocketSubprovider = require("web3-provider-engine/subproviders/websocket.js");
 const { TruffleArtifactAdapter } = require("@0x/sol-trace");
 const { ProfilerSubprovider } = require("@0x/sol-profiler");
 const { CoverageSubprovider } = require("@0x/sol-coverage");
 const { RevertTraceSubprovider } = require("@0x/sol-trace");
 
-const mode = process.env.MODE || 'trace';
-const port = process.env.PORT || 8545
+const mode = process.env.MODE || "trace";
+const port = process.env.PORT || 8545;
 
 const projectRoot = ".";
 const solcVersion = "0.5.13";
@@ -25,7 +25,9 @@ if (mode === "profile") {
   );
   global.profilerSubprovider.stop();
   provider.addProvider(global.profilerSubprovider);
-  provider.addProvider(new WebsocketSubprovider({ rpcUrl: `http://localhost:${port}` }));
+  provider.addProvider(
+    new WebsocketSubprovider({ rpcUrl: `http://localhost:${port}` })
+  );
 } else {
   if (mode === "coverage") {
     global.coverageSubprovider = new CoverageSubprovider(
@@ -44,10 +46,12 @@ if (mode === "profile") {
     );
     provider.addProvider(revertTraceSubprovider);
   }
-  
-  provider.addProvider(new WebsocketSubprovider({ rpcUrl: `http://localhost:${port}` }))
+
+  provider.addProvider(
+    new WebsocketSubprovider({ rpcUrl: `http://localhost:${port}` })
+  );
 }
-provider.start(err => {
+provider.start((err) => {
   if (err !== undefined) {
     console.log(err);
     process.exit(1);
@@ -62,7 +66,8 @@ provider.send = provider.sendAsync.bind(provider);
 
 module.exports = {
   networks: {
-    development: { // TODO: maybe change to development ?
+    development: {
+      // TODO: maybe change to development ?
       // skipDryRun: true,
       // host: "127.0.0.1",
       // port: port,
@@ -71,7 +76,20 @@ module.exports = {
       //   process.env.PRIV_KEY_DEPLOY,
       //   "http://127.0.0.1:8545",
       // ),
-      provider
+      provider,
+    },
+  },
+  compilers: {
+    solc: {
+      version: "0.5.13", // Fetch exact version from solc-bin (default: truffle's version)
+      // docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
+      // settings: {          // See the solidity docs for advice about optimization and evmVersion
+      //  optimizer: {
+      //    enabled: false,
+      //    runs: 200
+      //  },
+      //  evmVersion: "byzantium"
+      // }
     },
   },
 };

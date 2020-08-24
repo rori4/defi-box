@@ -1,5 +1,5 @@
 require("dotenv").config();
-jest.setTimeout(100000);
+jest.setTimeout(200000);
 
 const { ethers, utils } = require("ethers");
 const { parseUnits } = utils;

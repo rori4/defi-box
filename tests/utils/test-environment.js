@@ -1,10 +1,13 @@
 require("dotenv").config();
 const { ethers } = require("ethers");
+const path = require('path')
 const NodeEnvironment = require("jest-environment-node");
-const { RevertTraceSubprovider, SolCompilerArtifactAdapter } = require("@0x/sol-trace");
+const { RevertTraceSubprovider, TruffleArtifactAdapter } = require("@0x/sol-trace");
 const { Web3ProviderEngine, GanacheSubprovider, FakeGasEstimateSubprovider } = require("@0x/subproviders");
 const defaultFromAddress = process.env.ACCOUNT_TEST;
-const artifactAdapter = new SolCompilerArtifactAdapter("../../build/contracts", "../../contracts");
+const projectRoot = process.cwd()
+const solcVersion = require('../../truffle-config').compilers.solc.version
+const artifactAdapter = new TruffleArtifactAdapter(projectRoot, solcVersion);
 const revertTraceSubprovider = new RevertTraceSubprovider(artifactAdapter, defaultFromAddress, true);
 const providerEngine = new Web3ProviderEngine();
 
