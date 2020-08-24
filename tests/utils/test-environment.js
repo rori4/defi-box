@@ -1,14 +1,19 @@
 require("dotenv").config();
 const { ethers } = require("ethers");
-const Ganache = require("ganache-core");
 const NodeEnvironment = require("jest-environment-node");
-const WALLET_WITH_DAI = "0x58c8a6312e5E975b1627969cC22Af241e08742Ad" // NOTE: This can change if DAI is moved!
+const { RevertTraceSubprovider, SolCompilerArtifactAdapter } = require("@0x/sol-trace");
+const { Web3ProviderEngine, GanacheSubprovider, FakeGasEstimateSubprovider } = require("@0x/subproviders");
+const defaultFromAddress = process.env.ACCOUNT_TEST;
+const artifactAdapter = new SolCompilerArtifactAdapter("../../build/contracts", "../../contracts");
+const revertTraceSubprovider = new RevertTraceSubprovider(artifactAdapter, defaultFromAddress, true);
+const providerEngine = new Web3ProviderEngine();
+
 
 const startChain = async () => {
-  const ganache = Ganache.provider({
+  const ganache = new GanacheSubprovider({
     fork: "http://127.0.0.1:8545",
     network_id: 1,
-    unlocked_accounts: [WALLET_WITH_DAI], // DAI holder account
+    // unlocked_accounts: [WALLET_WITH_DAI], // DAI holder account
     accounts: [
       {
         secretKey: process.env.PRIV_KEY_TEST,
@@ -17,10 +22,15 @@ const startChain = async () => {
     ],
   });
 
-  const provider = new ethers.providers.Web3Provider(ganache);
+  providerEngine.addProvider(new FakeGasEstimateSubprovider(4 * (10 ** 6))); // Ganache does a poor job of estimating gas, so just crank it up for testing.
+  providerEngine.addProvider(revertTraceSubprovider);
+  providerEngine.addProvider(ganache);
+  providerEngine.start();
+  
+  const provider = new ethers.providers.Web3Provider(providerEngine);
   const wallet = new ethers.Wallet(process.env.PRIV_KEY_TEST, provider);
-  const walletWithDai = provider.getSigner(WALLET_WITH_DAI);
-  return { wallet, walletWithDai };
+  
+  return { wallet };
 };
 
 class CustomEnvironment extends NodeEnvironment {

@@ -126,4 +126,11 @@ contract UniswapLiteBase {
         uint256 ethAmount = _getTokenToEthInput(from, fromAmount);
         return _getEthToTokenInput(to, ethAmount);
     }
+
+    function tokenToToken(address from, address to, uint256 tokenAmount)
+        internal
+        returns (uint256 tokenOutAmount)
+    {
+        return _tokenToToken(from, to, tokenAmount, uint256(1));
+    }
 }
